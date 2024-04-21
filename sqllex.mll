@@ -61,8 +61,11 @@ rule token = parse
   | '-'                     { MINUS }
   | '*'                     { STAR }
   | '/'                     { DIVIDE }
+  |'('                      {LPAR}
+  |')'                      {RPAR}
   | ','                     { COMMA }
   | ';'                     { SEMICOLON }
+  | '.'                      { DOT }
   | eof                     { raise Eoi }
   | _                       { raise (Failure "Illegal character") }
 
