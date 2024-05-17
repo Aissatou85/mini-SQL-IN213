@@ -1,0 +1,16 @@
+main.cmo :
+main.cmx :
+sqlast.cmo :
+sqlast.cmx :
+sqllex.cmo : \
+    sqlparse.cmi
+sqllex.cmx : \
+    sqlparse.cmx
+sqlparse.cmo : \
+    sqlast.cmo \
+    sqlparse.cmi
+sqlparse.cmx : \
+    sqlast.cmx \
+    sqlparse.cmi
+sqlparse.cmi : \
+    sqlast.cmo

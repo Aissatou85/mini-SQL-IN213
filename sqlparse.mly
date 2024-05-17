@@ -1,6 +1,6 @@
 %{
 
-open sqlast
+open Sqlast
 
 %}
 
@@ -18,6 +18,7 @@ open sqlast
 %token EQUAL COMMA DOT
 %token GREATER SMALLER GREATEREQUAL SMALLEREQUAL
 %token SEMICOLON
+%token AS
 
 %left FROM
 %left WHERE
@@ -32,7 +33,7 @@ open sqlast
 
 
 %start main
-%type <sqlast.expr> main
+%type <Sqlast.simple_query> main
 
 /* La grammaire */
 
@@ -40,66 +41,67 @@ open sqlast
 
 main:
     |SEMICOLON main   {$2}
-    |expr SEMICOLON   {$1}
+    |simple_query SEMICOLON   {$1}
 ;
 
 simple_query:
-    |SELECT projection FROM source where { squery $2 $4 $5}
-    
+    |SELECT projection FROM source where { Squery ($2, $4 ,$5)}
+;   
 where:
-    |WHERE conditiopn {$2}
-
+    |WHERE condition {$2}
+;
 projection:
-    |STAR       { asterix }
-    |projection_bis     {pro $1}
-
+    |STAR       { Asterix }
+    |projection_bis     {Pro $1}
+;
 projection_bis:
-    |column     {col $1}
-    |column COMA projection_bis     {col2 $1 $3}
-
+    |column     {Col $1}
+    |column COMMA projection_bis     {Col2 ($1 ,$3)}
+;
 column: 
-    |expr                    { ex $1 }
-    |expr AS ID              { exid $1 $3 }
-
+    |expr                    { Ex $1  }
+    |expr AS ID              { ExID ($1 , $3) }
+;
 source: 
-    |ID 					  { id $1 }
-    |LPAR simple_query RPAR   { squery $2 }
-    |source COMA source     { comma $1 $3 }
+    |ID 					  { ID $1 }
+//     |LPAR simple_query RPAR   { squery $2 }
+    // |source COMA source     { comma $1 $3 }
 
-
+;
 condition:
-    |predicate         { pred $1 }
-    |NOT condition      { no $2 }
-    |condition AND condition { anD $1 $3 }
-    |condition OR condition { oR $1 $3 }
-
+    |predicate         { Pred $1 }
+    |NOT condition      { Not $2 }
+    |condition AND condition { And ($1 , $3) }
+    |condition OR condition { Or ($1 , $3) }
+;
 
 
 predicate:
-    |LPAR condition RPAR { par $2 }
-    |expr sep expr       { seP $1 $3 $2 }
-                           
+    |LPAR condition RPAR { Par $2 }
+    |expr sep expr       { Sep ($1 , $3 , $2) }
+ ;                          
 sep:
-    |EQUAL   { eq }
-    |SMALLER    { lt }
-    |GREATER   { gt }
-    |SMALLEREQUAL    { le }
-    |GREATEREQUAL   { ge }
-
+    |EQUAL   { Eq }
+    |SMALLER    { Lt }
+    |GREATER   { Gt }
+    |SMALLEREQUAL    { Le }
+    |GREATEREQUAL   { Ge }
+; 
 expr :
-    |attribute      { att $1 }
-    |LPAR expr RPAR { parexp $2 }
-    |INT            { inT $1 }
-    |FLOAT          { floaT $1 }
-    |STRING         { strinG $1 }
-    |expr operation expr { ope $1 $3 $2 }
+    |attribute      { Att $1 }
+    |LPAR expr RPAR { Parexp $2 }
+    |INT            { Int $1 }
+    |FLOAT          { Float $1 }
+    |STRING         { String $1 }
+    |expr operation expr { Ope ($1 , $3 , $2) }
 
-
+;
 attribute:
-    |ID DOT ID { dot $1 $3 }
-
+    |ID DOT ID { Dot ($1 , $3)}
+;
 operation:
-    |PLUS      { plus }
-    |MINUS     { minus }
-    |STAR      { astrix }
-    |SLASH     { slash }
+    |PLUS      { Plus }
+    |MINUS     { Minus }
+    |STAR      { Astrix }
+    |DIVIDE    { Slash }
+;
