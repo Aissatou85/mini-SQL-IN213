@@ -6,6 +6,11 @@ type token =
   | SELECT
   | FROM
   | WHERE
+  | CREATE
+  | TABLE
+  | INSERT
+  | INTO
+  | VALUES
   | AND
   | OR
   | NOT
@@ -24,6 +29,8 @@ type token =
   | SMALLEREQUAL
   | SEMICOLON
   | AS
+  | INTEGER
+  | VARCHAR
 
 open Parsing;;
 let _ = parse_error;;
@@ -31,29 +38,36 @@ let _ = parse_error;;
 
 open Sqlast
 
-# 35 "sqlparse.ml"
+# 42 "sqlparse.ml"
 let yytransl_const = [|
   261 (* SELECT *);
   262 (* FROM *);
   263 (* WHERE *);
-  264 (* AND *);
-  265 (* OR *);
-  266 (* NOT *);
-  267 (* PLUS *);
-  268 (* MINUS *);
-  269 (* STAR *);
-  270 (* DIVIDE *);
-  271 (* LPAR *);
-  272 (* RPAR *);
-  273 (* EQUAL *);
-  274 (* COMMA *);
-  275 (* DOT *);
-  276 (* GREATER *);
-  277 (* SMALLER *);
-  278 (* GREATEREQUAL *);
-  279 (* SMALLEREQUAL *);
-  280 (* SEMICOLON *);
-  281 (* AS *);
+  264 (* CREATE *);
+  265 (* TABLE *);
+  266 (* INSERT *);
+  267 (* INTO *);
+  268 (* VALUES *);
+  269 (* AND *);
+  270 (* OR *);
+  271 (* NOT *);
+  272 (* PLUS *);
+  273 (* MINUS *);
+  274 (* STAR *);
+  275 (* DIVIDE *);
+  276 (* LPAR *);
+  277 (* RPAR *);
+  278 (* EQUAL *);
+  279 (* COMMA *);
+  280 (* DOT *);
+  281 (* GREATER *);
+  282 (* SMALLER *);
+  283 (* GREATEREQUAL *);
+  284 (* SMALLEREQUAL *);
+  285 (* SEMICOLON *);
+  286 (* AS *);
+  287 (* INTEGER *);
+  288 (* VARCHAR *);
     0|]
 
 let yytransl_block = [|
@@ -64,94 +78,115 @@ let yytransl_block = [|
     0|]
 
 let yylhs = "\255\255\
-\001\000\001\000\002\000\005\000\003\000\003\000\007\000\007\000\
-\008\000\008\000\004\000\006\000\006\000\006\000\006\000\010\000\
-\010\000\011\000\011\000\011\000\011\000\011\000\009\000\009\000\
-\009\000\009\000\009\000\009\000\012\000\013\000\013\000\013\000\
-\013\000\000\000"
+\001\000\001\000\002\000\002\000\002\000\005\000\003\000\003\000\
+\009\000\009\000\010\000\010\000\012\000\006\000\006\000\006\000\
+\004\000\008\000\008\000\008\000\008\000\013\000\013\000\014\000\
+\014\000\014\000\014\000\014\000\011\000\011\000\011\000\011\000\
+\011\000\011\000\011\000\011\000\011\000\007\000\007\000\007\000\
+\015\000\000\000"
 
 let yylen = "\002\000\
-\002\000\002\000\005\000\002\000\001\000\001\000\001\000\003\000\
-\001\000\003\000\001\000\001\000\002\000\003\000\003\000\003\000\
-\003\000\001\000\001\000\001\000\001\000\001\000\001\000\003\000\
-\001\000\001\000\001\000\003\000\003\000\001\000\001\000\001\000\
-\001\000\002\000"
+\002\000\002\000\005\000\004\000\005\000\002\000\001\000\001\000\
+\001\000\003\000\001\000\003\000\001\000\000\000\001\000\003\000\
+\001\000\001\000\002\000\003\000\003\000\003\000\003\000\001\000\
+\001\000\001\000\001\000\001\000\001\000\003\000\001\000\001\000\
+\001\000\003\000\003\000\003\000\003\000\000\000\001\000\003\000\
+\003\000\002\000"
 
 let yydefred = "\000\000\
-\000\000\000\000\000\000\000\000\034\000\000\000\025\000\027\000\
-\000\000\026\000\005\000\000\000\000\000\006\000\000\000\000\000\
-\023\000\001\000\002\000\000\000\000\000\000\000\000\000\030\000\
-\031\000\032\000\033\000\000\000\000\000\029\000\024\000\011\000\
-\000\000\008\000\010\000\000\000\000\000\003\000\000\000\000\000\
-\000\000\000\000\012\000\013\000\000\000\000\000\000\000\000\000\
-\018\000\020\000\019\000\022\000\021\000\000\000\016\000\014\000\
-\000\000\000\000"
+\000\000\000\000\000\000\000\000\000\000\000\000\042\000\000\000\
+\031\000\033\000\000\000\032\000\007\000\000\000\000\000\008\000\
+\000\000\000\000\029\000\000\000\000\000\001\000\002\000\000\000\
+\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\017\000\000\000\000\000\041\000\030\000\000\000\010\000\000\000\
+\000\000\036\000\037\000\012\000\013\000\004\000\000\000\000\000\
+\000\000\003\000\000\000\005\000\000\000\000\000\000\000\000\000\
+\000\000\018\000\016\000\000\000\019\000\000\000\000\000\000\000\
+\000\000\024\000\026\000\025\000\028\000\027\000\000\000\040\000\
+\022\000\020\000\000\000\000\000"
 
 let yydgoto = "\002\000\
-\005\000\006\000\013\000\033\000\038\000\041\000\014\000\015\000\
-\042\000\043\000\054\000\017\000\029\000"
+\007\000\008\000\015\000\034\000\050\000\046\000\052\000\056\000\
+\016\000\017\000\057\000\047\000\058\000\071\000\019\000"
 
-let yysindex = "\005\000\
-\253\254\000\000\032\255\253\254\000\000\233\254\000\000\000\000\
-\245\254\000\000\000\000\053\255\004\255\000\000\250\254\047\255\
-\000\000\000\000\000\000\015\255\091\255\043\255\053\255\000\000\
-\000\000\000\000\000\000\046\255\053\255\000\000\000\000\000\000\
-\031\255\000\000\000\000\097\255\038\255\000\000\038\255\038\255\
-\035\255\075\255\000\000\000\000\085\255\062\255\038\255\038\255\
-\000\000\000\000\000\000\000\000\000\000\053\255\000\000\000\000\
-\042\255\097\255"
+let yysindex = "\002\000\
+\000\255\000\000\012\255\253\254\026\255\000\255\000\000\009\255\
+\000\000\000\000\027\255\000\000\000\000\088\255\047\255\000\000\
+\042\255\081\255\000\000\066\255\066\255\000\000\000\000\067\255\
+\122\255\066\255\088\255\088\255\088\255\088\255\088\255\070\255\
+\000\000\075\255\083\255\000\000\000\000\089\255\000\000\004\255\
+\004\255\000\000\000\000\000\000\000\000\000\000\059\255\088\255\
+\016\255\000\000\075\255\000\000\087\255\016\255\016\255\021\255\
+\109\255\000\000\000\000\088\255\000\000\244\254\096\255\016\255\
+\016\255\000\000\000\000\000\000\000\000\000\000\088\255\000\000\
+\000\000\000\000\094\255\025\255"
 
 let yyrindex = "\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\000\000\000\000\000\000\058\255\255\254\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\110\255\254\254\000\000\000\000\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\000\000\000\000\000\000\007\255\000\000\000\000\000\000\000\000\
-\028\255\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
+\000\000\073\255\000\000\000\000\000\000\000\000\000\000\033\255\
+\058\255\000\000\000\000\000\000\000\000\000\000\090\255\091\255\
+\000\000\000\000\073\255\000\000\100\255\000\000\000\000\101\255\
+\000\000\000\000\000\000\091\255\000\000\000\000\000\000\000\000\
 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\
-\254\254\251\254"
+\000\000\000\000\019\255\080\255"
 
 let yygindex = "\000\000\
-\061\000\000\000\000\000\000\000\000\000\023\000\043\000\000\000\
-\253\255\000\000\000\000\000\000\000\000"
+\126\000\000\000\000\000\242\255\000\000\082\000\084\000\012\000\
+\115\000\000\000\253\255\000\000\000\000\000\000\000\000"
 
-let yytablesize = 111
-let yytable = "\016\000\
-\019\000\003\000\017\000\017\000\009\000\001\000\015\000\020\000\
-\021\000\022\000\017\000\023\000\028\000\015\000\028\000\028\000\
-\009\000\030\000\017\000\016\000\004\000\015\000\028\000\028\000\
-\028\000\036\000\028\000\028\000\028\000\028\000\028\000\028\000\
-\007\000\008\000\009\000\010\000\046\000\037\000\007\000\008\000\
-\009\000\010\000\047\000\048\000\011\000\032\000\012\000\039\000\
-\035\000\047\000\058\000\004\000\040\000\007\000\008\000\009\000\
-\010\000\024\000\025\000\026\000\027\000\044\000\045\000\007\000\
-\018\000\034\000\000\000\012\000\000\000\056\000\057\000\028\000\
-\024\000\025\000\026\000\027\000\000\000\031\000\049\000\000\000\
-\000\000\050\000\051\000\052\000\053\000\024\000\025\000\026\000\
-\027\000\000\000\000\000\049\000\047\000\048\000\050\000\051\000\
-\052\000\053\000\000\000\000\000\055\000\024\000\025\000\026\000\
-\027\000\000\000\031\000\024\000\025\000\026\000\027\000"
+let yytablesize = 144
+let yytable = "\018\000\
+\064\000\065\000\001\000\011\000\003\000\020\000\035\000\004\000\
+\073\000\005\000\025\000\038\000\009\000\010\000\011\000\012\000\
+\009\000\010\000\011\000\012\000\011\000\030\000\031\000\018\000\
+\040\000\041\000\042\000\043\000\006\000\013\000\054\000\014\000\
+\021\000\064\000\065\000\055\000\021\000\023\000\034\000\021\000\
+\028\000\029\000\030\000\031\000\053\000\034\000\034\000\021\000\
+\034\000\034\000\024\000\063\000\026\000\034\000\034\000\034\000\
+\053\000\034\000\034\000\034\000\034\000\034\000\034\000\035\000\
+\027\000\061\000\062\000\076\000\033\000\036\000\035\000\035\000\
+\044\000\035\000\035\000\074\000\075\000\045\000\035\000\035\000\
+\035\000\051\000\035\000\035\000\035\000\035\000\035\000\035\000\
+\009\000\010\000\011\000\012\000\023\000\023\000\048\000\049\000\
+\028\000\029\000\030\000\031\000\023\000\014\000\028\000\029\000\
+\030\000\031\000\064\000\014\000\023\000\060\000\032\000\028\000\
+\029\000\030\000\031\000\009\000\037\000\066\000\015\000\038\000\
+\067\000\068\000\069\000\070\000\028\000\029\000\030\000\031\000\
+\039\000\006\000\066\000\022\000\059\000\067\000\068\000\069\000\
+\070\000\028\000\029\000\030\000\031\000\039\000\037\000\072\000"
 
 let yycheck = "\003\000\
-\024\001\005\001\008\001\009\001\006\001\001\000\009\001\019\001\
-\012\000\006\001\016\001\018\001\006\001\016\001\008\001\009\001\
-\018\001\003\001\024\001\023\000\024\001\024\001\016\001\017\001\
-\018\001\029\000\020\001\021\001\022\001\023\001\024\001\025\001\
-\001\001\002\001\003\001\004\001\040\000\007\001\001\001\002\001\
-\003\001\004\001\008\001\009\001\013\001\003\001\015\001\010\001\
-\003\001\008\001\054\000\024\001\015\001\001\001\002\001\003\001\
-\004\001\011\001\012\001\013\001\014\001\039\000\040\000\006\001\
-\004\000\023\000\255\255\015\001\255\255\047\000\048\000\025\001\
-\011\001\012\001\013\001\014\001\255\255\016\001\017\001\255\255\
-\255\255\020\001\021\001\022\001\023\001\011\001\012\001\013\001\
-\014\001\255\255\255\255\017\001\008\001\009\001\020\001\021\001\
-\022\001\023\001\255\255\255\255\016\001\011\001\012\001\013\001\
-\014\001\255\255\016\001\011\001\012\001\013\001\014\001"
+\013\001\014\001\001\000\006\001\005\001\009\001\021\000\008\001\
+\021\001\010\001\014\000\026\000\001\001\002\001\003\001\004\001\
+\001\001\002\001\003\001\004\001\023\001\018\001\019\001\027\000\
+\028\000\029\000\030\000\031\000\029\001\018\001\015\001\020\001\
+\014\001\013\001\014\001\020\001\011\001\029\001\006\001\021\001\
+\016\001\017\001\018\001\019\001\048\000\013\001\014\001\029\001\
+\016\001\017\001\024\001\055\000\006\001\021\001\022\001\023\001\
+\060\000\025\001\026\001\027\001\028\001\029\001\030\001\006\001\
+\023\001\054\000\055\000\071\000\003\001\003\001\013\001\014\001\
+\003\001\016\001\017\001\064\000\065\000\003\001\021\001\022\001\
+\023\001\023\001\025\001\026\001\027\001\028\001\029\001\030\001\
+\001\001\002\001\003\001\004\001\013\001\014\001\012\001\007\001\
+\016\001\017\001\018\001\019\001\021\001\029\001\016\001\017\001\
+\018\001\019\001\013\001\020\001\029\001\023\001\030\001\016\001\
+\017\001\018\001\019\001\006\001\021\001\022\001\029\001\029\001\
+\025\001\026\001\027\001\028\001\016\001\017\001\018\001\019\001\
+\029\001\029\001\022\001\006\000\051\000\025\001\026\001\027\001\
+\028\001\016\001\017\001\018\001\019\001\027\000\021\001\060\000"
 
 let yynames_const = "\
   SELECT\000\
   FROM\000\
   WHERE\000\
+  CREATE\000\
+  TABLE\000\
+  INSERT\000\
+  INTO\000\
+  VALUES\000\
   AND\000\
   OR\000\
   NOT\000\
@@ -170,6 +205,8 @@ let yynames_const = "\
   SMALLEREQUAL\000\
   SEMICOLON\000\
   AS\000\
+  INTEGER\000\
+  VARCHAR\000\
   "
 
 let yynames_block = "\
@@ -184,235 +221,299 @@ let yyact = [|
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : Sqlast.simple_query) in
     Obj.repr(
-# 43 "sqlparse.mly"
+# 44 "sqlparse.mly"
                       (_2)
-# 190 "sqlparse.ml"
+# 227 "sqlparse.ml"
                : Sqlast.simple_query))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 1 : 'simple_query) in
     Obj.repr(
-# 44 "sqlparse.mly"
+# 45 "sqlparse.mly"
                               (_1)
-# 197 "sqlparse.ml"
+# 234 "sqlparse.ml"
                : Sqlast.simple_query))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 3 : 'projection) in
     let _4 = (Parsing.peek_val __caml_parser_env 1 : 'source) in
     let _5 = (Parsing.peek_val __caml_parser_env 0 : 'where) in
     Obj.repr(
-# 48 "sqlparse.mly"
+# 50 "sqlparse.mly"
                                          ( Squery (_2, _4 ,_5))
-# 206 "sqlparse.ml"
+# 243 "sqlparse.ml"
+               : 'simple_query))
+; (fun __caml_parser_env ->
+    let _3 = (Parsing.peek_val __caml_parser_env 1 : 'source) in
+    let _4 = (Parsing.peek_val __caml_parser_env 0 : 'col_list) in
+    Obj.repr(
+# 51 "sqlparse.mly"
+                                  ( Cquery(_3, _4))
+# 251 "sqlparse.ml"
+               : 'simple_query))
+; (fun __caml_parser_env ->
+    let _3 = (Parsing.peek_val __caml_parser_env 2 : 'source) in
+    let _5 = (Parsing.peek_val __caml_parser_env 0 : 'val_list) in
+    Obj.repr(
+# 52 "sqlparse.mly"
+                                        (Iquery(_3, _5))
+# 259 "sqlparse.ml"
                : 'simple_query))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'condition) in
     Obj.repr(
-# 51 "sqlparse.mly"
+# 55 "sqlparse.mly"
                      (_2)
-# 213 "sqlparse.ml"
+# 266 "sqlparse.ml"
                : 'where))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 54 "sqlparse.mly"
+# 58 "sqlparse.mly"
                 ( Asterix )
-# 219 "sqlparse.ml"
+# 272 "sqlparse.ml"
                : 'projection))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'projection_bis) in
     Obj.repr(
-# 55 "sqlparse.mly"
+# 59 "sqlparse.mly"
                         (Pro _1)
-# 226 "sqlparse.ml"
+# 279 "sqlparse.ml"
                : 'projection))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'column) in
     Obj.repr(
-# 58 "sqlparse.mly"
+# 62 "sqlparse.mly"
                 (Col _1)
-# 233 "sqlparse.ml"
+# 286 "sqlparse.ml"
                : 'projection_bis))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'column) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'projection_bis) in
     Obj.repr(
-# 59 "sqlparse.mly"
+# 63 "sqlparse.mly"
                                      (Col2 (_1 ,_3))
-# 241 "sqlparse.ml"
+# 294 "sqlparse.ml"
                : 'projection_bis))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 62 "sqlparse.mly"
+# 66 "sqlparse.mly"
                              ( Ex _1  )
-# 248 "sqlparse.ml"
+# 301 "sqlparse.ml"
                : 'column))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 63 "sqlparse.mly"
+# 67 "sqlparse.mly"
                              ( ExID (_1 , _3) )
-# 256 "sqlparse.ml"
+# 309 "sqlparse.ml"
                : 'column))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 66 "sqlparse.mly"
+# 71 "sqlparse.mly"
+         ( ID _1)
+# 316 "sqlparse.ml"
+               : 'col))
+; (fun __caml_parser_env ->
+    Obj.repr(
+# 75 "sqlparse.mly"
+      ([])
+# 322 "sqlparse.ml"
+               : 'col_list))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 0 : 'col) in
+    Obj.repr(
+# 76 "sqlparse.mly"
+         ( [_1] )
+# 329 "sqlparse.ml"
+               : 'col_list))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'col) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'col_list) in
+    Obj.repr(
+# 77 "sqlparse.mly"
+                        ( _1 :: _3 )
+# 337 "sqlparse.ml"
+               : 'col_list))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
+    Obj.repr(
+# 81 "sqlparse.mly"
                ( ID _1 )
-# 263 "sqlparse.ml"
+# 344 "sqlparse.ml"
                : 'source))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'predicate) in
     Obj.repr(
-# 72 "sqlparse.mly"
+# 87 "sqlparse.mly"
                        ( Pred _1 )
-# 270 "sqlparse.ml"
+# 351 "sqlparse.ml"
                : 'condition))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 0 : 'condition) in
     Obj.repr(
-# 73 "sqlparse.mly"
+# 88 "sqlparse.mly"
                         ( Not _2 )
-# 277 "sqlparse.ml"
+# 358 "sqlparse.ml"
                : 'condition))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'condition) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'condition) in
     Obj.repr(
-# 74 "sqlparse.mly"
+# 89 "sqlparse.mly"
                              ( And (_1 , _3) )
-# 285 "sqlparse.ml"
+# 366 "sqlparse.ml"
                : 'condition))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'condition) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'condition) in
     Obj.repr(
-# 75 "sqlparse.mly"
+# 90 "sqlparse.mly"
                             ( Or (_1 , _3) )
-# 293 "sqlparse.ml"
+# 374 "sqlparse.ml"
                : 'condition))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'condition) in
     Obj.repr(
-# 80 "sqlparse.mly"
+# 95 "sqlparse.mly"
                          ( Par _2 )
-# 300 "sqlparse.ml"
+# 381 "sqlparse.ml"
                : 'predicate))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'sep) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 81 "sqlparse.mly"
+# 96 "sqlparse.mly"
                          ( Sep (_1 , _3 , _2) )
-# 309 "sqlparse.ml"
+# 390 "sqlparse.ml"
                : 'predicate))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 84 "sqlparse.mly"
+# 99 "sqlparse.mly"
              ( Eq )
-# 315 "sqlparse.ml"
+# 396 "sqlparse.ml"
                : 'sep))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 85 "sqlparse.mly"
+# 100 "sqlparse.mly"
                 ( Lt )
-# 321 "sqlparse.ml"
+# 402 "sqlparse.ml"
                : 'sep))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 86 "sqlparse.mly"
+# 101 "sqlparse.mly"
                ( Gt )
-# 327 "sqlparse.ml"
+# 408 "sqlparse.ml"
                : 'sep))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 87 "sqlparse.mly"
+# 102 "sqlparse.mly"
                      ( Le )
-# 333 "sqlparse.ml"
+# 414 "sqlparse.ml"
                : 'sep))
 ; (fun __caml_parser_env ->
     Obj.repr(
-# 88 "sqlparse.mly"
+# 103 "sqlparse.mly"
                     ( Ge )
-# 339 "sqlparse.ml"
+# 420 "sqlparse.ml"
                : 'sep))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : 'attribute) in
     Obj.repr(
-# 91 "sqlparse.mly"
+# 106 "sqlparse.mly"
                     ( Att _1 )
-# 346 "sqlparse.ml"
+# 427 "sqlparse.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'expr) in
     Obj.repr(
-# 92 "sqlparse.mly"
+# 107 "sqlparse.mly"
                     ( Parexp _2 )
-# 353 "sqlparse.ml"
+# 434 "sqlparse.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : int) in
     Obj.repr(
-# 93 "sqlparse.mly"
+# 108 "sqlparse.mly"
                     ( Int _1 )
-# 360 "sqlparse.ml"
+# 441 "sqlparse.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : float) in
     Obj.repr(
-# 94 "sqlparse.mly"
+# 109 "sqlparse.mly"
                     ( Float _1 )
-# 367 "sqlparse.ml"
+# 448 "sqlparse.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 95 "sqlparse.mly"
-                    ( String _1 )
-# 374 "sqlparse.ml"
+# 110 "sqlparse.mly"
+                   ( String _1 )
+# 455 "sqlparse.ml"
                : 'expr))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
-    let _2 = (Parsing.peek_val __caml_parser_env 1 : 'operation) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
     Obj.repr(
-# 96 "sqlparse.mly"
-                         ( Ope (_1 , _3 , _2) )
-# 383 "sqlparse.ml"
+# 111 "sqlparse.mly"
+                    ( Ope (_1 , _3 , Plus) )
+# 463 "sqlparse.ml"
                : 'expr))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 112 "sqlparse.mly"
+                     ( Ope (_1 , _3 , Minus) )
+# 471 "sqlparse.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 113 "sqlparse.mly"
+                    ( Ope (_1 , _3 , Astrix) )
+# 479 "sqlparse.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 114 "sqlparse.mly"
+                      ( Ope (_1 , _3 , Slash) )
+# 487 "sqlparse.ml"
+               : 'expr))
+; (fun __caml_parser_env ->
+    Obj.repr(
+# 117 "sqlparse.mly"
+      ([])
+# 493 "sqlparse.ml"
+               : 'val_list))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 0 : 'expr) in
+    Obj.repr(
+# 118 "sqlparse.mly"
+          ( [_1])
+# 500 "sqlparse.ml"
+               : 'val_list))
+; (fun __caml_parser_env ->
+    let _1 = (Parsing.peek_val __caml_parser_env 2 : 'expr) in
+    let _3 = (Parsing.peek_val __caml_parser_env 0 : 'val_list) in
+    Obj.repr(
+# 119 "sqlparse.mly"
+                         (_1 :: _3)
+# 508 "sqlparse.ml"
+               : 'val_list))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 2 : string) in
     let _3 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
-# 100 "sqlparse.mly"
+# 123 "sqlparse.mly"
                ( Dot (_1 , _3))
-# 391 "sqlparse.ml"
+# 516 "sqlparse.ml"
                : 'attribute))
-; (fun __caml_parser_env ->
-    Obj.repr(
-# 103 "sqlparse.mly"
-               ( Plus )
-# 397 "sqlparse.ml"
-               : 'operation))
-; (fun __caml_parser_env ->
-    Obj.repr(
-# 104 "sqlparse.mly"
-               ( Minus )
-# 403 "sqlparse.ml"
-               : 'operation))
-; (fun __caml_parser_env ->
-    Obj.repr(
-# 105 "sqlparse.mly"
-               ( Astrix )
-# 409 "sqlparse.ml"
-               : 'operation))
-; (fun __caml_parser_env ->
-    Obj.repr(
-# 106 "sqlparse.mly"
-               ( Slash )
-# 415 "sqlparse.ml"
-               : 'operation))
 (* Entry main *)
 ; (fun __caml_parser_env -> raise (Parsing.YYexit (Parsing.peek_val __caml_parser_env 0)))
 |]

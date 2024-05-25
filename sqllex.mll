@@ -74,11 +74,18 @@ rule token = parse
   | "select"|"SELECT"       { SELECT }
   | "from"|"FROM"           { FROM }
   | "where"|"WHERE"         { WHERE }
+  | "insert"|"INSERT"       { INSERT }
+  | "into"|"INTO"           { INTO }
+  | "values"|"VALUES"       { VALUES }
+  | "create"|"CREATE"       { CREATE }
+  | "table"|"TABLE"         { TABLE }
   | "and"|"AND"             { AND }
   | "or"|"OR"               { OR }
   | "not"|"NOT"             { NOT }
+  | "integer"|"INTEGER"     { INTEGER }
+  | "varchar"|"VARCHAR"     { VARCHAR }
   | ['0'-'9']+              { INT(int_of_string (Lexing.lexeme lexbuf)) }
-  |['a'-'z' 'A'-'Z' '_']+   {STRING(Lexing.lexeme lexbuf)}
+  |"\""['a'-'z' 'A'-'Z' '_']+"\""   {STRING(Lexing.lexeme lexbuf)}
   | ['a'-'z' 'A'-'Z' '_']['a'-'z' 'A'-'Z' '0'-'9' '_']*   { ID(Lexing.lexeme lexbuf) }
   | '"'                     { reset_string_buffer();
                              in_string lexbuf;

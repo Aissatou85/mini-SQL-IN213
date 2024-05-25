@@ -11,7 +11,7 @@ open Sqlast
 %token <string> STRING 
 %token <string> ID
 %token <float> FLOAT
-%token SELECT FROM WHERE
+%token SELECT FROM WHERE CREATE TABLE INSERT INTO VALUES
 %token AND OR NOT
 %token PLUS MINUS STAR DIVIDE
 %token LPAR RPAR
@@ -19,16 +19,17 @@ open Sqlast
 %token GREATER SMALLER GREATEREQUAL SMALLEREQUAL
 %token SEMICOLON
 %token AS
+%token INTEGER
+%token VARCHAR 
 
-%left FROM
-%left WHERE
-%left SELECT
+
+%left FROM VALUES
+%left WHERE TABLE INTO
+%left SELECT INSERT CREATE
 %left COMMA
 %left EQUAL GREATER SMALLER GREATEREQUAL SMALLEREQUAL
-%left PLUS MINUS
-%left STAR DIVIDE
-%left OR
-%left AND
+%left PLUS MINUS OR 
+%left STAR DIVIDE AND
 %left NOT
 
 
@@ -42,10 +43,13 @@ open Sqlast
 main:
     |SEMICOLON main   {$2}
     |simple_query SEMICOLON   {$1}
+
 ;
 
 simple_query:
     |SELECT projection FROM source where { Squery ($2, $4 ,$5)}
+    |CREATE TABLE source col_list { Cquery($3, $4)}
+    |INSERT INTO source VALUES val_list {Iquery($3, $5)}
 ;   
 where:
     |WHERE condition {$2}
@@ -62,6 +66,17 @@ column:
     |expr                    { Ex $1  }
     |expr AS ID              { ExID ($1 , $3) }
 ;
+
+col:
+    | ID { ID $1}
+;
+
+col_list:
+    | {[]}
+    |col { [$1] }
+    |col COMMA col_list { $1 :: $3 }
+ ;
+
 source: 
     |ID 					  { ID $1 }
 //     |LPAR simple_query RPAR   { squery $2 }
@@ -92,16 +107,18 @@ expr :
     |LPAR expr RPAR { Parexp $2 }
     |INT            { Int $1 }
     |FLOAT          { Float $1 }
-    |STRING         { String $1 }
-    |expr operation expr { Ope ($1 , $3 , $2) }
+    |STRING        { String $1 }
+    |expr PLUS expr { Ope ($1 , $3 , Plus) }
+    |expr MINUS expr { Ope ($1 , $3 , Minus) }
+    |expr STAR expr { Ope ($1 , $3 , Astrix) }
+    |expr DIVIDE expr { Ope ($1 , $3 , Slash) }
+;
+val_list:
+    | {[]}
+    |expr { [$1]}
+    |expr COMMA val_list {$1 :: $3}
 
 ;
 attribute:
     |ID DOT ID { Dot ($1 , $3)}
-;
-operation:
-    |PLUS      { Plus }
-    |MINUS     { Minus }
-    |STAR      { Astrix }
-    |DIVIDE    { Slash }
 ;

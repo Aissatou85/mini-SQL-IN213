@@ -5,10 +5,10 @@ CAMLYACC=$(BINDIR)ocamlyacc
 # COMPFLAGS=-w A-4-6-9 -warn-error A -g
 COMPFLAGS=
 
-EXEC = main
+EXEC = loop
 
 # Fichiers compilés, à produire pour fabriquer l'exécutable
-SOURCES = sqlast.ml  sqlsem.ml main.ml
+SOURCES = sqlast.ml  sqlsem.ml loop.ml
 GENERATED = sqllex.ml sqlparse.ml sqlparse.mli
 MLIS =
 OBJS = $(GENERATED:.ml=.cmo) $(SOURCES:.ml=.cmo)

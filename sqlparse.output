@@ -1,0 +1,920 @@
+   0  $accept : %entry% $end
+
+   1  main : SEMICOLON main
+   2       | simple_query SEMICOLON
+
+   3  simple_query : SELECT projection FROM source where
+   4               | CREATE TABLE source
+   5               | INSERT INTO source VALUES val_list
+
+   6  where : WHERE condition
+
+   7  projection : STAR
+   8             | projection_bis
+
+   9  projection_bis : column
+  10                 | column COMMA projection_bis
+
+  11  column : expr
+  12         | expr AS ID
+
+  13  source : ID
+
+  14  condition : predicate
+  15            | NOT condition
+  16            | condition AND condition
+  17            | condition OR condition
+
+  18  predicate : LPAR condition RPAR
+  19            | expr sep expr
+
+  20  sep : EQUAL
+  21      | SMALLER
+  22      | GREATER
+  23      | SMALLEREQUAL
+  24      | GREATEREQUAL
+
+  25  expr : attribute
+  26       | LPAR expr RPAR
+  27       | INT
+  28       | FLOAT
+  29       | STRING
+  30       | expr PLUS expr
+  31       | expr MINUS expr
+  32       | expr STAR expr
+  33       | expr DIVIDE expr
+
+  34  val : INT
+  35      | FLOAT
+  36      | STRING
+  37      | val PLUS val
+  38      | val MINUS val
+  39      | val STAR val
+  40      | val DIVIDE val
+
+  41  val_list :
+  42           | val COMMA val_list
+
+  43  attribute : ID DOT ID
+
+  44  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (44)
+
+	SELECT  shift 3
+	CREATE  shift 4
+	INSERT  shift 5
+	SEMICOLON  shift 6
+	.  error
+
+	main  goto 7
+	simple_query  goto 8
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	simple_query : SELECT . projection FROM source where  (3)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	STAR  shift 13
+	LPAR  shift 14
+	.  error
+
+	projection  goto 15
+	projection_bis  goto 16
+	column  goto 17
+	expr  goto 18
+	attribute  goto 19
+
+
+state 4
+	simple_query : CREATE . TABLE source  (4)
+
+	TABLE  shift 20
+	.  error
+
+
+state 5
+	simple_query : INSERT . INTO source VALUES val_list  (5)
+
+	INTO  shift 21
+	.  error
+
+
+state 6
+	main : SEMICOLON . main  (1)
+
+	SELECT  shift 3
+	CREATE  shift 4
+	INSERT  shift 5
+	SEMICOLON  shift 6
+	.  error
+
+	main  goto 22
+	simple_query  goto 8
+
+
+state 7
+	%entry% : '\001' main .  (44)
+
+	.  reduce 44
+
+
+state 8
+	main : simple_query . SEMICOLON  (2)
+
+	SEMICOLON  shift 23
+	.  error
+
+
+state 9
+	expr : INT .  (27)
+
+	.  reduce 27
+
+
+state 10
+	expr : STRING .  (29)
+
+	.  reduce 29
+
+
+state 11
+	attribute : ID . DOT ID  (43)
+
+	DOT  shift 24
+	.  error
+
+
+state 12
+	expr : FLOAT .  (28)
+
+	.  reduce 28
+
+
+state 13
+	projection : STAR .  (7)
+
+	.  reduce 7
+
+
+state 14
+	expr : LPAR . expr RPAR  (26)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 25
+	attribute  goto 19
+
+
+state 15
+	simple_query : SELECT projection . FROM source where  (3)
+
+	FROM  shift 26
+	.  error
+
+
+state 16
+	projection : projection_bis .  (8)
+
+	.  reduce 8
+
+
+state 17
+	projection_bis : column .  (9)
+	projection_bis : column . COMMA projection_bis  (10)
+
+	COMMA  shift 27
+	FROM  reduce 9
+
+
+state 18
+	column : expr .  (11)
+	column : expr . AS ID  (12)
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	PLUS  shift 28
+	MINUS  shift 29
+	STAR  shift 30
+	DIVIDE  shift 31
+	AS  shift 32
+	FROM  reduce 11
+	COMMA  reduce 11
+
+
+state 19
+	expr : attribute .  (25)
+
+	.  reduce 25
+
+
+state 20
+	simple_query : CREATE TABLE . source  (4)
+
+	ID  shift 33
+	.  error
+
+	source  goto 34
+
+
+state 21
+	simple_query : INSERT INTO . source VALUES val_list  (5)
+
+	ID  shift 33
+	.  error
+
+	source  goto 35
+
+
+state 22
+	main : SEMICOLON main .  (1)
+
+	.  reduce 1
+
+
+state 23
+	main : simple_query SEMICOLON .  (2)
+
+	.  reduce 2
+
+
+state 24
+	attribute : ID DOT . ID  (43)
+
+	ID  shift 36
+	.  error
+
+
+state 25
+	expr : LPAR expr . RPAR  (26)
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	PLUS  shift 28
+	MINUS  shift 29
+	STAR  shift 30
+	DIVIDE  shift 31
+	RPAR  shift 37
+	.  error
+
+
+state 26
+	simple_query : SELECT projection FROM . source where  (3)
+
+	ID  shift 33
+	.  error
+
+	source  goto 38
+
+
+state 27
+	projection_bis : column COMMA . projection_bis  (10)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	projection_bis  goto 39
+	column  goto 17
+	expr  goto 18
+	attribute  goto 19
+
+
+state 28
+	expr : expr PLUS . expr  (30)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 40
+	attribute  goto 19
+
+
+state 29
+	expr : expr MINUS . expr  (31)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 41
+	attribute  goto 19
+
+
+state 30
+	expr : expr STAR . expr  (32)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 42
+	attribute  goto 19
+
+
+state 31
+	expr : expr DIVIDE . expr  (33)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 43
+	attribute  goto 19
+
+
+state 32
+	column : expr AS . ID  (12)
+
+	ID  shift 44
+	.  error
+
+
+state 33
+	source : ID .  (13)
+
+	.  reduce 13
+
+
+state 34
+	simple_query : CREATE TABLE source .  (4)
+
+	.  reduce 4
+
+
+state 35
+	simple_query : INSERT INTO source . VALUES val_list  (5)
+
+	VALUES  shift 45
+	.  error
+
+
+state 36
+	attribute : ID DOT ID .  (43)
+
+	.  reduce 43
+
+
+state 37
+	expr : LPAR expr RPAR .  (26)
+
+	.  reduce 26
+
+
+state 38
+	simple_query : SELECT projection FROM source . where  (3)
+
+	WHERE  shift 46
+	.  error
+
+	where  goto 47
+
+
+state 39
+	projection_bis : column COMMA projection_bis .  (10)
+
+	.  reduce 10
+
+
+state 40
+	expr : expr . PLUS expr  (30)
+	expr : expr PLUS expr .  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	STAR  shift 30
+	DIVIDE  shift 31
+	FROM  reduce 30
+	AND  reduce 30
+	OR  reduce 30
+	PLUS  reduce 30
+	MINUS  reduce 30
+	RPAR  reduce 30
+	EQUAL  reduce 30
+	COMMA  reduce 30
+	GREATER  reduce 30
+	SMALLER  reduce 30
+	GREATEREQUAL  reduce 30
+	SMALLEREQUAL  reduce 30
+	SEMICOLON  reduce 30
+	AS  reduce 30
+
+
+state 41
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr MINUS expr .  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	STAR  shift 30
+	DIVIDE  shift 31
+	FROM  reduce 31
+	AND  reduce 31
+	OR  reduce 31
+	PLUS  reduce 31
+	MINUS  reduce 31
+	RPAR  reduce 31
+	EQUAL  reduce 31
+	COMMA  reduce 31
+	GREATER  reduce 31
+	SMALLER  reduce 31
+	GREATEREQUAL  reduce 31
+	SMALLEREQUAL  reduce 31
+	SEMICOLON  reduce 31
+	AS  reduce 31
+
+
+state 42
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr STAR expr .  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	.  reduce 32
+
+
+state 43
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+	expr : expr DIVIDE expr .  (33)
+
+	.  reduce 33
+
+
+state 44
+	column : expr AS ID .  (12)
+
+	.  reduce 12
+
+
+state 45
+	simple_query : INSERT INTO source VALUES . val_list  (5)
+	val_list : .  (41)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	SEMICOLON  reduce 41
+
+	val_list  goto 51
+	val  goto 52
+
+
+state 46
+	where : WHERE . condition  (6)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	NOT  shift 53
+	LPAR  shift 54
+	.  error
+
+	condition  goto 55
+	expr  goto 56
+	predicate  goto 57
+	attribute  goto 19
+
+
+state 47
+	simple_query : SELECT projection FROM source where .  (3)
+
+	.  reduce 3
+
+
+state 48
+	val : INT .  (34)
+
+	.  reduce 34
+
+
+state 49
+	val : STRING .  (36)
+
+	.  reduce 36
+
+
+state 50
+	val : FLOAT .  (35)
+
+	.  reduce 35
+
+
+state 51
+	simple_query : INSERT INTO source VALUES val_list .  (5)
+
+	.  reduce 5
+
+
+state 52
+	val : val . PLUS val  (37)
+	val : val . MINUS val  (38)
+	val : val . STAR val  (39)
+	val : val . DIVIDE val  (40)
+	val_list : val . COMMA val_list  (42)
+
+	PLUS  shift 58
+	MINUS  shift 59
+	STAR  shift 60
+	DIVIDE  shift 61
+	COMMA  shift 62
+	.  error
+
+
+state 53
+	condition : NOT . condition  (15)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	NOT  shift 53
+	LPAR  shift 54
+	.  error
+
+	condition  goto 63
+	expr  goto 56
+	predicate  goto 57
+	attribute  goto 19
+
+
+state 54
+	predicate : LPAR . condition RPAR  (18)
+	expr : LPAR . expr RPAR  (26)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	NOT  shift 53
+	LPAR  shift 54
+	.  error
+
+	condition  goto 64
+	expr  goto 65
+	predicate  goto 57
+	attribute  goto 19
+
+
+state 55
+	where : WHERE condition .  (6)
+	condition : condition . AND condition  (16)
+	condition : condition . OR condition  (17)
+
+	AND  shift 66
+	OR  shift 67
+	SEMICOLON  reduce 6
+
+
+state 56
+	predicate : expr . sep expr  (19)
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	PLUS  shift 28
+	MINUS  shift 29
+	STAR  shift 30
+	DIVIDE  shift 31
+	EQUAL  shift 68
+	GREATER  shift 69
+	SMALLER  shift 70
+	GREATEREQUAL  shift 71
+	SMALLEREQUAL  shift 72
+	.  error
+
+	sep  goto 73
+
+
+state 57
+	condition : predicate .  (14)
+
+	.  reduce 14
+
+
+state 58
+	val : val PLUS . val  (37)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	.  error
+
+	val  goto 74
+
+
+state 59
+	val : val MINUS . val  (38)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	.  error
+
+	val  goto 75
+
+
+state 60
+	val : val STAR . val  (39)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	.  error
+
+	val  goto 76
+
+
+state 61
+	val : val DIVIDE . val  (40)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	.  error
+
+	val  goto 77
+
+
+state 62
+	val_list : val COMMA . val_list  (42)
+	val_list : .  (41)
+
+	INT  shift 48
+	STRING  shift 49
+	FLOAT  shift 50
+	SEMICOLON  reduce 41
+
+	val_list  goto 78
+	val  goto 52
+
+
+state 63
+	condition : NOT condition .  (15)
+	condition : condition . AND condition  (16)
+	condition : condition . OR condition  (17)
+
+	.  reduce 15
+
+
+state 64
+	condition : condition . AND condition  (16)
+	condition : condition . OR condition  (17)
+	predicate : LPAR condition . RPAR  (18)
+
+	AND  shift 66
+	OR  shift 67
+	RPAR  shift 79
+	.  error
+
+
+state 65
+	predicate : expr . sep expr  (19)
+	expr : LPAR expr . RPAR  (26)
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	PLUS  shift 28
+	MINUS  shift 29
+	STAR  shift 30
+	DIVIDE  shift 31
+	RPAR  shift 37
+	EQUAL  shift 68
+	GREATER  shift 69
+	SMALLER  shift 70
+	GREATEREQUAL  shift 71
+	SMALLEREQUAL  shift 72
+	.  error
+
+	sep  goto 73
+
+
+state 66
+	condition : condition AND . condition  (16)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	NOT  shift 53
+	LPAR  shift 54
+	.  error
+
+	condition  goto 80
+	expr  goto 56
+	predicate  goto 57
+	attribute  goto 19
+
+
+state 67
+	condition : condition OR . condition  (17)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	NOT  shift 53
+	LPAR  shift 54
+	.  error
+
+	condition  goto 81
+	expr  goto 56
+	predicate  goto 57
+	attribute  goto 19
+
+
+state 68
+	sep : EQUAL .  (20)
+
+	.  reduce 20
+
+
+state 69
+	sep : GREATER .  (22)
+
+	.  reduce 22
+
+
+state 70
+	sep : SMALLER .  (21)
+
+	.  reduce 21
+
+
+state 71
+	sep : GREATEREQUAL .  (24)
+
+	.  reduce 24
+
+
+state 72
+	sep : SMALLEREQUAL .  (23)
+
+	.  reduce 23
+
+
+state 73
+	predicate : expr sep . expr  (19)
+
+	INT  shift 9
+	STRING  shift 10
+	ID  shift 11
+	FLOAT  shift 12
+	LPAR  shift 14
+	.  error
+
+	expr  goto 82
+	attribute  goto 19
+
+
+state 74
+	val : val . PLUS val  (37)
+	val : val PLUS val .  (37)
+	val : val . MINUS val  (38)
+	val : val . STAR val  (39)
+	val : val . DIVIDE val  (40)
+
+	STAR  shift 60
+	DIVIDE  shift 61
+	PLUS  reduce 37
+	MINUS  reduce 37
+	COMMA  reduce 37
+
+
+state 75
+	val : val . PLUS val  (37)
+	val : val . MINUS val  (38)
+	val : val MINUS val .  (38)
+	val : val . STAR val  (39)
+	val : val . DIVIDE val  (40)
+
+	STAR  shift 60
+	DIVIDE  shift 61
+	PLUS  reduce 38
+	MINUS  reduce 38
+	COMMA  reduce 38
+
+
+state 76
+	val : val . PLUS val  (37)
+	val : val . MINUS val  (38)
+	val : val . STAR val  (39)
+	val : val STAR val .  (39)
+	val : val . DIVIDE val  (40)
+
+	.  reduce 39
+
+
+state 77
+	val : val . PLUS val  (37)
+	val : val . MINUS val  (38)
+	val : val . STAR val  (39)
+	val : val . DIVIDE val  (40)
+	val : val DIVIDE val .  (40)
+
+	.  reduce 40
+
+
+state 78
+	val_list : val COMMA val_list .  (42)
+
+	.  reduce 42
+
+
+state 79
+	predicate : LPAR condition RPAR .  (18)
+
+	.  reduce 18
+
+
+state 80
+	condition : condition . AND condition  (16)
+	condition : condition AND condition .  (16)
+	condition : condition . OR condition  (17)
+
+	.  reduce 16
+
+
+state 81
+	condition : condition . AND condition  (16)
+	condition : condition . OR condition  (17)
+	condition : condition OR condition .  (17)
+
+	AND  shift 66
+	OR  reduce 17
+	RPAR  reduce 17
+	SEMICOLON  reduce 17
+
+
+state 82
+	predicate : expr sep expr .  (19)
+	expr : expr . PLUS expr  (30)
+	expr : expr . MINUS expr  (31)
+	expr : expr . STAR expr  (32)
+	expr : expr . DIVIDE expr  (33)
+
+	PLUS  shift 28
+	MINUS  shift 29
+	STAR  shift 30
+	DIVIDE  shift 31
+	AND  reduce 19
+	OR  reduce 19
+	RPAR  reduce 19
+	SEMICOLON  reduce 19
+
+
+33 terminals, 16 nonterminals
+45 grammar rules, 83 states

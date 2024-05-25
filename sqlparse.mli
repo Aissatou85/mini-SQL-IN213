@@ -6,6 +6,11 @@ type token =
   | SELECT
   | FROM
   | WHERE
+  | CREATE
+  | TABLE
+  | INSERT
+  | INTO
+  | VALUES
   | AND
   | OR
   | NOT
@@ -24,6 +29,8 @@ type token =
   | SMALLEREQUAL
   | SEMICOLON
   | AS
+  | INTEGER
+  | VARCHAR
 
 val main :
   (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Sqlast.simple_query

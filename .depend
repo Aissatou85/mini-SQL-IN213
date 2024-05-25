@@ -1,5 +1,13 @@
-main.cmo :
-main.cmx :
+loop.cmo : \
+    sqlsem.cmo \
+    sqlparse.cmi \
+    sqllex.cmo \
+    sqlast.cmo
+loop.cmx : \
+    sqlsem.cmx \
+    sqlparse.cmx \
+    sqllex.cmx \
+    sqlast.cmx
 sqlast.cmo :
 sqlast.cmx :
 sqllex.cmo : \
@@ -14,3 +22,7 @@ sqlparse.cmx : \
     sqlparse.cmi
 sqlparse.cmi : \
     sqlast.cmo
+sqlsem.cmo : \
+    sqlast.cmo
+sqlsem.cmx : \
+    sqlast.cmx
