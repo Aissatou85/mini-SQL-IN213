@@ -3,6 +3,8 @@ type simple_query =
   |Cquery of source * col_list
   |Iquery of source * val_list 
   |Uquery of source * change * condition
+  |Dquery of source * condition
+  |Drquery of source
 
   and projection = 
     |Asterix 
@@ -85,6 +87,13 @@ type simple_query =
         print_source src
         print_change ch
         print_condition cond
+      | Dquery (src, cond) -> 
+        fprintf oc "DELETE FROM %a WHERE %a"
+        print_source src
+        print_condition cond
+      | Drquery (src) ->
+        fprintf oc "DELETE TABLE %a"
+        print_source src
     
     and print_projection oc = function
       | Asterix -> fprintf oc "*"

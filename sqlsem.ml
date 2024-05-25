@@ -18,9 +18,12 @@ type query_result =
   | CreateTableResult of string
   | InsertIntoResult of string
   | UpdateSetResult of string 
+  | DeleteResult of string
+  | DropTableResult of string
 
 let print_result = function
   | SelectResult results ->
+    if List.length results > 0 then (
       Printf.printf "Query results:\n";
       List.iter (fun record ->
         List.iter (fun (col, value) ->
@@ -30,12 +33,19 @@ let print_result = function
           | StringVal v -> Printf.printf "%s: %s\n" col v) record;
         Printf.printf "\n") results;
       Printf.printf "\n%!"
+    ) else (
+      Printf.printf "No results found.\n"
+    )
   | CreateTableResult table_name ->
       Printf.printf "Table '%s' created.\n" table_name
   | InsertIntoResult table_name ->
       Printf.printf "Inserted into table '%s'.\n" table_name
   | UpdateSetResult table_name ->
     Printf.printf "Updated table '%s'.\n" table_name
+  | DeleteResult table_name ->
+      Printf.printf "the line of '%s' is deleted.\n" table_name
+  | DropTableResult table_name ->
+        Printf.printf "Table '%s' deleted.\n" table_name
 
 let create_table name colnames =
   let new_table = { nom = name; colnames = colnames; records = [] } in
@@ -92,6 +102,20 @@ let rec eval_query query =
         UpdateSetResult table_name
       else
         failwith "Column not found in the table"
+  | Dquery (source, condition) ->
+    let table_name = eval_source source in
+      let table = List.find (fun t -> t.nom = table_name) !database in
+      let colnames = table.colnames in
+      let filtered_records = eval_condition condition table.records colnames in
+      let updated_records = List.filter (fun record -> not (List.mem record filtered_records)) table.records in
+      let updated_table = { table with records = updated_records } in
+      database := updated_table :: List.filter (fun t -> t.nom <> table_name) !database;
+      DeleteResult table_name
+  | Drquery (source) ->
+      let table_name = eval_source source in
+      database := List.filter (fun t -> t.nom <> table_name) !database;
+      DropTableResult table_name
+
 
 
 and eval_projection projection table_columns =

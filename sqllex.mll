@@ -80,7 +80,9 @@ rule token = parse
   | "create"|"CREATE"       { CREATE }
   | "table"|"TABLE"         { TABLE }
   | "update"|"UPDATE"       { UPDATE }
-  | "set"|"SET"             { SET } 
+  | "set"|"SET"             { SET }  
+  | "delete"|"DELETE"       { DELETE }
+  | "drop"|"DROP"           { DROP }
   | "and"|"AND"             { AND }
   | "or"|"OR"               { OR }
   | "not"|"NOT"             { NOT }

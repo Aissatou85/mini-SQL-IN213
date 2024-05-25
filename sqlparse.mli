@@ -13,6 +13,8 @@ type token =
   | VALUES
   | UPDATE
   | SET
+  | DELETE
+  | DROP
   | AND
   | OR
   | NOT

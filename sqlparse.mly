@@ -11,7 +11,7 @@ open Sqlast
 %token <string> STRING 
 %token <string> ID
 %token <float> FLOAT
-%token SELECT FROM WHERE CREATE TABLE INSERT INTO VALUES UPDATE SET
+%token SELECT FROM WHERE CREATE TABLE INSERT INTO VALUES UPDATE SET DELETE DROP
 %token AND OR NOT
 %token PLUS MINUS STAR DIVIDE
 %token LPAR RPAR
@@ -26,7 +26,7 @@ open Sqlast
 %left FROM VALUES
 %left WHERE TABLE INTO
 %left SET 
-%left SELECT INSERT CREATE UPDATE
+%left SELECT INSERT CREATE UPDATE DELETE DROP
 %left COMMA
 %left EQUAL GREATER SMALLER GREATEREQUAL SMALLEREQUAL
 %left PLUS MINUS OR 
@@ -52,6 +52,8 @@ simple_query:
     |CREATE TABLE source col_list { Cquery($3, $4)}
     |INSERT INTO source VALUES val_list {Iquery($3, $5)}
     |UPDATE source SET change where {Uquery($2, $4, $5)}
+    |DELETE FROM source where { Dquery($3, $4)}
+    |DROP TABLE source {Drquery($3)}
 ;   
 where:
     |WHERE condition {$2}
@@ -81,8 +83,6 @@ col_list:
 
 source: 
     |ID 					  { ID $1 }
-//     |LPAR simple_query RPAR   { squery $2 }
-    // |source COMA source     { comma $1 $3 }
 
 ;
 
