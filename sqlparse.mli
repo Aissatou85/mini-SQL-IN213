@@ -11,6 +11,8 @@ type token =
   | INSERT
   | INTO
   | VALUES
+  | UPDATE
+  | SET
   | AND
   | OR
   | NOT

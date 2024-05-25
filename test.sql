@@ -9,3 +9,5 @@ SELECT * FROM eleves WHERE eleves.age <= 20 ;;
 SELECT * FROM eleves WHERE eleves.age <= 18 ;;
 SELECT eleves.nom FROM eleves WHERE eleves.age <= 17 ;;
 SELECT eleves.nom, eleves.prenom FROM eleves WHERE eleves.age <= 20 ;;
+UPDATE eleves SET nom = "aviro" WHERE eleve.nom = "aviron" ;;
+SELECT * FROM eleves WHERE eleve.nom = "aviro" ;;

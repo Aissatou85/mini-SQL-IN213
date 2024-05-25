@@ -11,7 +11,7 @@ open Sqlast
 %token <string> STRING 
 %token <string> ID
 %token <float> FLOAT
-%token SELECT FROM WHERE CREATE TABLE INSERT INTO VALUES
+%token SELECT FROM WHERE CREATE TABLE INSERT INTO VALUES UPDATE SET
 %token AND OR NOT
 %token PLUS MINUS STAR DIVIDE
 %token LPAR RPAR
@@ -25,7 +25,8 @@ open Sqlast
 
 %left FROM VALUES
 %left WHERE TABLE INTO
-%left SELECT INSERT CREATE
+%left SET 
+%left SELECT INSERT CREATE UPDATE
 %left COMMA
 %left EQUAL GREATER SMALLER GREATEREQUAL SMALLEREQUAL
 %left PLUS MINUS OR 
@@ -50,6 +51,7 @@ simple_query:
     |SELECT projection FROM source where { Squery ($2, $4 ,$5)}
     |CREATE TABLE source col_list { Cquery($3, $4)}
     |INSERT INTO source VALUES val_list {Iquery($3, $5)}
+    |UPDATE source SET change where {Uquery($2, $4, $5)}
 ;   
 where:
     |WHERE condition {$2}
@@ -83,6 +85,11 @@ source:
     // |source COMA source     { comma $1 $3 }
 
 ;
+
+change:
+    |col EQUAL expr {Ch ( $1, $3)}
+;
+
 condition:
     |predicate         { Pred $1 }
     |NOT condition      { Not $2 }

@@ -2,7 +2,7 @@ type simple_query =
   |Squery of projection * source * condition
   |Cquery of source * col_list
   |Iquery of source * val_list 
-
+  |Uquery of source * change * condition
 
   and projection = 
     |Asterix 
@@ -25,6 +25,8 @@ type simple_query =
     |And of condition * condition
     |Or of condition * condition
  
+  and change = 
+    |Ch of col * expr
 
   and predicate = 
     |Par of condition
@@ -78,6 +80,11 @@ type simple_query =
               fprintf oc "INSERT INTO %a VALUES (%a)"
                 print_source src
                 print_val_list vals
+      | Uquery (src, ch, cond) ->
+        fprintf oc "UPDATE %a SET %a WHERE %a"
+        print_source src
+        print_change ch
+        print_condition cond
     
     and print_projection oc = function
       | Asterix -> fprintf oc "*"
@@ -104,6 +111,9 @@ type simple_query =
     and print_predicate oc = function
       | Par cond -> fprintf oc "(%a)" print_condition cond
       | Sep (expr1, expr2, sep) -> fprintf oc "%a %a %a" print_expr expr1 print_sep sep print_expr expr2
+    
+    and print_change oc = function
+        |Ch (col, expr) -> fprintf oc "%a = %a" print_col_def col print_expr expr
     
     and print_sep oc = function
       | Eq -> fprintf oc "="

@@ -17,6 +17,7 @@ type query_result =
   | SelectResult of (string * value) list list
   | CreateTableResult of string
   | InsertIntoResult of string
+  | UpdateSetResult of string 
 
 let print_result = function
   | SelectResult results ->
@@ -33,6 +34,8 @@ let print_result = function
       Printf.printf "Table '%s' created.\n" table_name
   | InsertIntoResult table_name ->
       Printf.printf "Inserted into table '%s'.\n" table_name
+  | UpdateSetResult table_name ->
+    Printf.printf "Updated table '%s'.\n" table_name
 
 let create_table name colnames =
   let new_table = { nom = name; colnames = colnames; records = [] } in
@@ -43,6 +46,7 @@ let insert_into_table name values =
   let new_records = values :: table.records in
   let new_table = { table with records = new_records } in
   database := new_table :: List.filter (fun t -> t.nom <> name) !database
+  
 
 let findi f lst =
   let rec aux i = function
@@ -50,7 +54,7 @@ let findi f lst =
     | x::xs -> if f x then i else aux (i + 1) xs
   in aux 0 lst
 
-
+ 
 
 let rec eval_query query =
   match query with
@@ -75,6 +79,20 @@ let rec eval_query query =
       let values = List.map eval_value val_list in
       insert_into_table table_name values;
       InsertIntoResult table_name
+  | Uquery (source, change, condition) ->
+      let table_name = eval_source source in
+      let table = List.find (fun t -> t.nom = table_name) !database in
+      let colnames = table.colnames in
+      let (Ch (col, expr)) = change in
+      let col_name = match col with ID col_str -> col_str in
+      if List.mem col_name colnames then
+        let updated_records = update_records table col_name expr condition in
+        let updated_table = { table with records = updated_records } in
+        database := updated_table :: List.filter (fun t -> t.nom <> table_name) !database;
+        UpdateSetResult table_name
+      else
+        failwith "Column not found in the table"
+
 
 and eval_projection projection table_columns =
   match projection with
@@ -186,6 +204,14 @@ and eval_value = function
   | Float f -> FloatVal f
   | String s -> StringVal s
   | _ -> failwith "Invalid value expression"
+
+and update_records table col_name expr condition =
+    let col_index = findi (fun c -> c = col_name) table.colnames in
+    List.map (fun record ->
+      if eval_condition condition [record] table.colnames <> [] then
+        List.mapi (fun i v -> if i = col_index then eval_expr expr record table.colnames else v) record
+      else
+        record) table.records
 
 let eval e = eval_query e 
 

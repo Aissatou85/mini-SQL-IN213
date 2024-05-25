@@ -79,6 +79,8 @@ rule token = parse
   | "values"|"VALUES"       { VALUES }
   | "create"|"CREATE"       { CREATE }
   | "table"|"TABLE"         { TABLE }
+  | "update"|"UPDATE"       { UPDATE }
+  | "set"|"SET"             { SET } 
   | "and"|"AND"             { AND }
   | "or"|"OR"               { OR }
   | "not"|"NOT"             { NOT }
