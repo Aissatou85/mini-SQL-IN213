@@ -1,0 +1,13 @@
+CREATE TABLE employees id, employee_name, salary, department ;;
+INSERT INTO employees VALUES 1, "Alice", 60000, "HR" ;;
+INSERT INTO employees VALUES 2, "Bob", 70000, "Engineering" ;;
+INSERT INTO employees VALUES 3, "Charlie", 80000, "Marketing" ;;
+SELECT employees.employee_name, employees.salary FROM employees WHERE employees.salary >= 65000 ;;
+SELECT employees.employee_name, employees.salary  FROM employees WHERE employees.salary <= 65000 ;;
+SELECT employees.id FROM employees WHERE (employees.salary > 65000 AND employees.department = "Engineering") OR employees.department = "HR" ;;
+UPDATE employees SET salary = 75000 WHERE employees.id = 2 ;;
+UPDATE employees SET department = "Sales" WHERE employees.id = 3 ;;
+SELECT * FROM employees WHERE employees.id = 3 ;;
+DELETE FROM employees WHERE employees.id = 3 ;;
+SELECT * FROM employees WHERE employees.id = 3 ;;
+DROP TABLE employees;
